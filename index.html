@@ -102,14 +102,8 @@ html<!DOCTYPE html>
     localStorage.setItem('rehab_site_views', currentViews);
     document.getElementById('viewCounter').innerText = currentViews;
 
-    // スクロール同意
-    const scrollBox = document.getElementById('scrollBox');
-    const agreeBtn = document.getElementById('agreeBtn');
-    scrollBox.addEventListener('scroll', () => {
-        if (scrollBox.scrollHeight - scrollBox.scrollTop <= scrollBox.clientHeight + 5) {
-            agreeBtn.disabled = false;
-        }
-    });
+    // スマホ対応：バグを修正したスクロール判定ロジック const scrollBox = document.getElementById('scrollBox'); const agreeBtn = document.getElementById('agreeBtn'); scrollBox.addEventListener('scroll', () => { // スマホ特有の「画面のバウンド（引っ張り）」を考慮し、残り「15ピクセル」の余裕を持たせて判定 const isAtBottom = scrollBox.scrollHeight - scrollBox.scrollTop <= scrollBox.clientHeight + 15; if (isAtBottom) { agreeBtn.disabled = false; // 視覚的にボタンが押せるようになったことをわかりやすくするスタイル変更 agreeBtn.style.background = "#1e40af"; agreeBtn.style.cursor = "pointer"; } });
+
     agreeBtn.addEventListener('click', () => { document.getElementById('modal').style.display = 'none'; });
 
     let paperData = [];
