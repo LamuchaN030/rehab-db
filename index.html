@@ -1,10 +1,10 @@
-html<!DOCTYPE html>
+html
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>リハビリメタ分析論文要約検索</title>
-    <!-- 閲覧数を伸ばすためのSEO設定 -->
     <meta name="description" content="リハビリテーションに関するメタ分析の標準化平均差(SMD)や95%信頼区間(CI)の学術統計数値を集約した客観的データベースです。">
     <meta name="keywords" content="リハビリ,エビデンス,メタ分析,効果量,SMD,理学療法">
     <style>
@@ -33,8 +33,7 @@ html<!DOCTYPE html>
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.8); display: flex; justify-content: center; align-items: center; z-index: 100; }
         .modal-content { background: white; padding: 20px; max-width: 85%; border-radius: 16px; text-align: center; }
         .scroll-box { height: 180px; overflow-y: scroll; border: 1px solid #cbd5e1; padding: 10px; background: #f8fafc; font-size: 12px; text-align: left; margin-bottom: 15px; }
-        .agree-btn { background: #0f172a; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 14px; width: 100%; font-weight: bold; }
-        .agree-btn:disabled { background: #cbd5e1; color: #94a3b8; }
+        .agree-btn { background: #1e40af; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 14px; width: 100%; font-weight: bold; cursor: pointer; }
         .match-count { font-size: 12px; color: #64748b; margin-bottom: 10px; }
     </style>
 </head>
@@ -47,14 +46,15 @@ html<!DOCTYPE html>
     <!-- アクセスカウンター -->
     <div class="counter-box">📊 現在の延べ閲覧回数: <span id="viewCounter" class="counter-num">1</span> 回</div>
 
-    <!-- スクロール必須免責ポップアップ -->
+    <!-- 免責ポップアップ（最初からボタンが押せるように修正完了） -->
     <div id="modal" class="modal-overlay">
         <div class="modal-content">
             <h3>⚠️ 利用規約（自己責任の同意）</h3>
             <div id="scrollBox" class="scroll-box">
                 <p>【重要・免責事項】当サイトは、リハビリテーションに関する論文の統計数値（SMD・CI・p値）のみを機械的に表示するデータベースです。特定の治療法を指示・推奨するものではありません。</p>
                 <p style="color:red; font-weight:bold;">掲載情報に基づく自己流のリハビリは、転倒や心負荷等の重大な危険を伴います。必ず専門医の指示に従ってください。当方は一切の責任を負いません。</p>
-                <p>---- 最下部までスクロールすると同意できます ----</p>
+                <p>掲載データは研究結果の事実のみであり、実際の臨床応用に関しては必ず専門医療従事者の指示を仰いでください。</p>
+                <p>---- 内容をご確認の上、下のボタンを押してください ----</p>
             </div>
             <button id="agreeBtn" class="agree-btn">内容に同意して検索を開始する</button>
         </div>
@@ -102,12 +102,17 @@ html<!DOCTYPE html>
     localStorage.setItem('rehab_site_views', currentViews);
     document.getElementById('viewCounter').innerText = currentViews;
 
-    // スマホ対応：バグを修正したスクロール判定ロジック const scrollBox = document.getElementById('scrollBox'); const agreeBtn = document.getElementById('agreeBtn'); scrollBox.addEventListener('scroll', () => { // スマホ特有の「画面のバウンド（引っ張り）」を考慮し、残り「15ピクセル」の余裕を持たせて判定 const isAtBottom = scrollBox.scrollHeight - scrollBox.scrollTop <= scrollBox.clientHeight + 15; if (isAtBottom) { agreeBtn.disabled = false; // 視覚的にボタンが押せるようになったことをわかりやすくするスタイル変更 agreeBtn.style.background = "#1e40af"; agreeBtn.style.cursor = "pointer"; } });
-
-    agreeBtn.addEventListener('click', () => { document.getElementById('modal').style.display = 'none'; });
+    // 同意ボタンのクリックでポップアップを消すだけのシンプルな安全ロジックに修正
+    const agreeBtn = document.getElementById('agreeBtn');
+    agreeBtn.addEventListener('click', () => { 
+        document.getElementById('modal').style.display = 'none'; 
+    });
 
     let paperData = [];
-    fetch('data.json').then(res => res.json()).then(data => paperData = data);
+    fetch('data.json')
+        .then(res => res.json())
+        .then(data => { paperData = data; })
+        .catch(err => { console.error("データ読み込みエラー:", err); });
 
     const searchInput = document.getElementById('searchInput');
     const keywordSelect = document.getElementById('keywordSelect');
@@ -117,7 +122,9 @@ html<!DOCTYPE html>
         const selectVal = keywordSelect.value.toLowerCase();
         const resultArea = document.getElementById('resultArea');
         const matchCount = document.getElementById('matchCount');
-        resultArea.innerHTML = ''; matchCount.innerHTML = '';
+        
+        resultArea.innerHTML = ''; 
+        matchCount.innerHTML = '';
         if (!query && !selectVal) return;
 
         // 肩関節警告アラート
@@ -127,11 +134,13 @@ html<!DOCTYPE html>
 
         const filtered = paperData.filter(p => {
             const mq = query ? (p.title.toLowerCase().includes(query) || p.keywords.toLowerCase().includes(query)) : false;
-            const ms = selectVal ? (selectVal === 'all' || p.title.toLowerCase().includes(selectVal) || p.keywords.toLowerCase().includes(selectVal)) : false;
+            const ms = selectVal ? (selectVal === 
+'all' || p.title.toLowerCase().includes(selectVal) || p.keywords.toLowerCase().includes(selectVal)) : false;
             return query ? mq : ms;
         });
 
         matchCount.innerHTML = `該当論文数: ${filtered.length} 件`;
+        
         filtered.forEach(p => {
             const exclusion = p.title.includes('Capsulitis') ? "重度の骨粗鬆症、肩関節の骨折、糖尿病性拘縮、ステロイド注射直後の患者" : "完全断裂症例、過去の肩関節手術既往、頸椎疾患由来の肩痛患者";
             resultArea.innerHTML += `
@@ -149,3 +158,4 @@ html<!DOCTYPE html>
                 </div>`;
         });
     }
+    searchInput.addEventListener('input', () => { if(searchInput.value) keywordSelect.value = ""; doSearch(); });
