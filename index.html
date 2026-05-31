@@ -102,12 +102,15 @@ html
     localStorage.setItem('rehab_site_views', currentViews);
     document.getElementById('viewCounter').innerText = currentViews;
 
-    // 同意ボタンのクリックでポップアップを消すだけのシンプルな安全ロジックに修正
-    const agreeBtn = document.getElementById('agreeBtn');
-    agreeBtn.addEventListener('click', () => { 
-        document.getElementById('modal').style.display = 'none'; 
-    });
-
+    // ボタンを押したら即座にポップアップを物理的に完全消滅させるコード
+    const agreeBtn = document.getElementById('agreeBtn'); 
+    agreeBtn.onclick = function() { 
+        const modal = document.getElementById('modal'); 
+        if (modal) { 
+            modal.remove(); // 画面からポップアップの枠ごと完全に削除 
+        } 
+    };
+    
     let paperData = [];
     fetch('data.json')
         .then(res => res.json())
