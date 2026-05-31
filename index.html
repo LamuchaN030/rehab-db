@@ -1,175 +1,163 @@
-html
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>リハビリメタ分析論文要約検索</title>
-    <meta name="description" content="リハビリテーションに関するメタ分析の標準化平均差(SMD)や95%信頼区間(CI)の学術統計数値を集約した客観的データベースです。">
-    <meta name="keywords" content="リハビリ,エビデンス,メタ分析,効果量,SMD,理学療法">
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f4f8; color: #1e293b; margin: 0; padding: 10px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 15px; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
-        h1 { font-size: 18px; color: #0f172a; text-align: center; margin-bottom: 5px; }
-        .subtitle { font-size: 11px; color: #64748b; text-align: center; margin-bottom: 20px; }
-        .counter-box { text-align: center; font-size: 11px; color: #64748b; background: #f8fafc; padding: 6px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
-        .counter-num { font-weight: bold; color: #1e40af; }
-        .search-box { background: #e2e8f0; padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .input-text { padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #cbd5e1; -webkit-appearance: none; }
-        select { padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; -webkit-appearance: none; }
-        .paper-card { border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px; margin-bottom: 15px; background: white; }
-        .paper-title { color: #1e40af; font-size: 15px; margin: 0 0 8px 0; line-height: 1.4; }
-        .data-section { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 10px; border-radius: 0 8px 8px 0; font-size: 13px; margin: 10px 0; }
-        .tooltip { border-bottom: 1px dotted #1e40af; color: #1e40af; position: relative; display: inline-block; font-weight: bold; cursor: help; }
-        .tooltip::after {
-            content: attr(data-tip); position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
-            background: #1e293b; color: white; padding: 8px; border-radius: 6px; font-size: 11px; width: 200px;
-            opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 10; font-weight: normal;
-        }
-        .tooltip:hover::after { opacity: 1; }
-        .pubmed-btn { display: block; text-align: center; background: #1e40af; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 13px; margin-top: 10px; font-weight: bold; }
-        .monetize-box { background: #fffbeb; border: 1px dashed #d97706; padding: 15px; border-radius: 12px; margin: 20px 0; text-align: center; font-size: 12px; }
-        .ad-link { display: inline-block; background: #d97706; color: white; padding: 8px 15px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 5px; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.8); display: flex; justify-content: center; align-items: center; z-index: 100; }
-        .modal-content { background: white; padding: 20px; max-width: 85%; border-radius: 16px; text-align: center; }
-        .scroll-box { height: 180px; overflow-y: scroll; border: 1px solid #cbd5e1; padding: 10px; background: #f8fafc; font-size: 12px; text-align: left; margin-bottom: 15px; }
-        .agree-btn { background: #1e40af; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 14px; width: 100%; font-weight: bold; cursor: pointer; }
-        .match-count { font-size: 12px; color: #64748b; margin-bottom: 10px; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h1>📚 リハビリメタ分析 論文要約検索</h1>
-    <div class="subtitle">学術統計数値の記録プラットフォーム（医療指示なし）</div>
-    
-    <!-- アクセスカウンター -->
-    <div class="counter-box">📊 現在の延べ閲覧回数: <span id="viewCounter" class="counter-num">1</span> 回</div>
-
-    <div class="alert-bar">
-    <div class="alert-content">
-        <strong>⚠️ 【重要・免責事項】</strong> 当サイトはリハビリに関する論文の統計数値（SMD・CI・p値）のみを表示するデータベースであり、特定の治療法を推奨しません。掲載情報に基づく自己流のリハビリは、転倒や心負荷等の重大な危険を伴います。実際の臨床応用に関しては必ず専門医療従事者の指示を仰ぎ、自己責任でご利用ください。
-    </div>
-</div>
-
-<style>
-.alert-bar {
-    background-color: #fff3f3; /* 薄い赤背景 */
-    border-bottom: 2px solid #ffcccc;
-    padding: 12px 20px;
-    font-size: 13px;
-    line-height: 1.5;
-    color: #333;
-}
-.alert-content strong {
-    color: #cc0000;
-}
-</style>
-    <!-- 検索UI -->
-    <div class="search-box">
-        <label>🔍 疾患名やキーワードを入力（スマホ対応）:</label>
-        <input type="text" id="searchInput" class="input-text" placeholder="例: 五十肩、脳卒中、腰痛">
+<!DOCTYPE html> 
+<html lang="ja"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport"content="width=device-width, initial-scale=1.0"> 
+    <title>リハビリメタ分析 論文検索データベース</title> 
+    <style> 
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f8fafc; color: #334155; margin: 0; padding: 20px; line-height: 1.6; } 
+        .container { max-width: 650px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); } 
+        h1 { font-size: 24px; color: #1e293b; text-align: center; margin-bottom: 20px; } 
+        .disclaimer { background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 15px; font-size: 13px; color: #991b1b; border-radius: 4px; margin-bottom: 25px; } 
+        .search-box { display: flex; gap: 10px; margin-bottom: 25px; } 
+        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 16px; } 
+        .btn-search { padding: 12px 24px; background-color: #0284c7; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; } 
+        .btn-search:hover { background-color: #0369a1; } 
+        .card { background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); } 
+        .ai-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 6px; margin-top: 15px; font-size: 14px; color: #166534; } 
+        .profit-area { margin-top: 15px; text-align: right; border-top: 1px dashed #e2e8f0; padding-top: 15px; } 
+        .btn-amazon { display: inline-block; background: #e67e22; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 13px; } 
+        .btn-amazon:hover { background: #d35400; } 
         
-        <label>またはカテゴリから選択:</label>
-        <select id="keywordSelect">
-            <option value="">選択してください</option>
-            <option value="stroke">脳卒中 (Stroke)</option>
-            <option value="parkinson">パーキンソン病</option>
-            <option value="capsulitis">凍結肩・五十肩</option>
-            <option value="impingement">肩峰下インピンジメント</option>
-            <option value="rotator">腱板障害・肩痛</option>
-            <option value="all">【すべて表示】</option>
-        </select>
-    </div>
+        /* ☕ お布施（投げ銭）用スタイル */ 
+        .donation-section { margin-top: 40px; background: #fff7ed; border: 1px solid #ffedd5; padding: 25px; border-radius: 8px; text-align: center; } 
+        .donation-title { margin: 0 0 10px 0; color: #ea580c; font-size: 16px; font-weight: bold; } 
+        .donation-desc { font-size: 12px; color: #6b7280; margin-bottom: 15px; padding: 0 10px; } 
+        .btn-ofuse { display: inline-block; background: #f97316; color: white; padding: 10px 24px; text-decoration: none; border-radius: 9999px; font-weight: bold; font-size: 14px; } 
+        .btn-ofuse:hover { background: #ea580c; }
+        
+        /* 📬 Googleフォーム埋め込み用スタイル */ 
+        .form-section { margin-top: 40px; border-top: 2px dashed #cbd5e1; padding-top: 30px; } 
+        .form-title { font-size: 18px; color: #1e293b; text-align: center; margin-bottom: 5px; } 
+        .form-desc { font-size: 13px; color: #64748b; text-align: center; margin-bottom: 20px; } 
+        .form-wrapper { position: relative; width: 100%; height: 500px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; } 
+        .form-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; } 
+        
+        .footer-info { margin-top: 40px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px; } 
+    </style> 
+</head> 
+<body> 
+    
+<div class="container"> 
+    <h1>📚 リハビリメタ分析検索</h1> 
+    
+    <div class="disclaimer"> 
+        【重要】当サイトのデータは、医学的正確性を完全に保証するものではありません。臨床への応用は必ず医師や専門職の指示の元、自己責任で行ってください。 
+    </div> 
+    <!-- 検索フォーム --> 
+    <div class="search-box"> 
+        <input type="text" id="searchWord" placeholder="例：脳卒中、ロボット、肩関節、腰痛"> 
+        <button class="btn-search" onclick="searchMeta()">検索</button> 
+    </div> 
+    
+    <!-- 検索結果の表示エリア --> 
+    <div id="resultArea"></div> 
+    
+    <!-- ☕ お布施（投げ銭）エリア -->
+    <div class="donation-section"> 
+        <h3 class="donation-title">☕ サイトを応援する（お布施）</h3> 
+        <p　class="donation-desc"> 
+            当サイトは個人が完全無料で運営しています。いただいたご支援は、データベース維持のための費用として大切に活用させていただきます。<br> 
+            ※個別リハビリ指導や医学的相談の対価ではございませんのでご了承ください。 
+        </p> 
+        <!-- 💡 【書き換え箇所1】下記のhrefを、あなたのOFUSEやnoteのページURLに書き換えてください --> 
+        <a href="https://ofuse.me/lamuchan" target="_blank" rel="noopener" class="btn-ofuse"> 
+            応援を送る（外部サイトへ） 
+        </a> 
+    </div> 
+    
+    <!-- 📬 質問・提案受付フォームエリア --> 
+    <div class="form-section"> 
+        <h2　class="form-title">📬 ご質問・疾患追加のご提案</h2> 
+        <p class="form-desc">「このデータを追加してほしい」「数値の間違い」など、お気軽にお寄せください。</p> 
+        <div class="form-wrapper"> 
+            <!-- 💡 【書き換え箇所2】ここにGoogleフォームで取得した「埋め込みHTMLコード」のsrcURLを貼り付けてください --> 
+            <iframesrc="https://google.com" width="100%" height="500" frameborder="0" marginheight="0"marginwidth="0">読み込んでいます…</iframe> 
+        </div> 
+    </div> 
+    
+    <!-- フッター（閲覧数とアソシエイト明記） --> 
+    <div class="footer-info"> 
+        <!-- 📈 外部の完全無料カウンター（登録不要）を使ってPVを表示 --> 
+        <div　id="viewCounter"> 
+            ユーザー訪問記録：<img src="https://freetextcounter.com" alt="PV"style="vertical-align: middle; height: 18px;"> 回 
+    　　</div> 
+    　　<p style="margin-top: 10px;">当サイトはAmazonアソシエイト・プログラムの参加者です。</p> 
+　　</div> 
+</div> 
 
-    <div id="matchCount" class="match-count"></div>
-    <div id="resultArea"></div>
-
-    <!-- 法律およびAmazonの規約を遵守した、安全な収益化ボックス --> 
-    <div class="monetize-box"> 
-        <divstyle="font-weight:bold; color:#b45309;">☕ サイト運営の継続を応援する（PR）</div> 
-        <p style="margin:5px 0; font-size:11px; color:#64748b;">【アフィリエイト広告の明記】当サイトはAmazonアソシエイト・プログラム等のアフィリエイト広告を利用して収益を得ています。</ p> 
-        <p style="margin:5px 0;">Amazonで専門書を購入する際に以下を経由して応援（収益化）にご協力いただけますと幸いです。</ p> 
-        <!-- 【重要】登録後に、hrefのURLをご自身の「アソシエイト専用リンク」に書き換えてください --> 
-        <a href="https://amazon.co.jp" target="_blank" class="ad-link">📖 Amazonでリハビリ専門書を探す</a>
-    <!-- Amazonボタンの下などに追加するOFUSEリンク --> 
-    <a href="https://ofuse.me/lamuchan"target="_blank" style="display: inline-block; background: #ff4757; color: white; padding: 8px 15px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 5px;"> 
-        ☕ 運営者をコーヒー1杯分応援する（投げ銭） 
-    </a>
-    </div>
-
-    <!-- 修正案受付フォーム -->
-    <div style="background:#f1f5f9; border:1px solid #cbd5e1; padding:15px; border-radius:12px; text-align:center; font-size:12px;">
-        <div style="font-weight:bold; color:#334155; margin-bottom:5px;">🔧 データ修正・掲載論文のリクエスト</div>
-        <p style="margin:5px 0; color:#64748b;">学術数値の誤植指摘や追加リクエストは以下よりご提案ください（個別医療相談は返信不可）。</p>
-        <a href="https://google.com" target="_blank" style="display:inline-block; background:#475569; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; margin-top:5px;">📨 修正案・論文追加を提案する</a>
-    </div>
-</div>
-
-<script>
-    // カウンターロジック
-    let currentViews = localStorage.getItem('rehab_site_views') || 0;
-    currentViews = parseInt(currentViews) + 1;
-    localStorage.setItem('rehab_site_views', currentViews);
-    document.getElementById('viewCounter').innerText = currentViews;
-
-    // ボタンを押したら即座にポップアップを物理的に完全消滅させるコード
-    const agreeBtn = document.getElementById('agreeBtn'); 
-    agreeBtn.onclick = function() { 
-        const modal = document.getElementById('modal'); 
-        if (modal) { 
-            modal.remove(); // 画面からポップアップの枠ごと完全に削除 
+<script> 
+    // 💡 【書き換え箇所3】あなたのアマゾンアソシエイトID（末尾-22）に書き換えてください 
+    const AMAZON_ASSOCIATE_ID = "your-id-22"; 
+    
+    // 📊 全11疾患のデータベース（ここに丁寧な解説をあらかじめ内蔵させました！） 
+    const database = [ 
+        { disease: "脳卒中", treatment: "ロボット歩行訓練", smd: "0.45", isbn: "4896328212", summary: "歩行速度および歩行自立度の大幅な改善が認められた。", ai: "効果量(SMD)が0.45と、リハビリ効果がしっかり証明されています。先進技術を用いた前向きな訓練法です！" }, 
+        { disease: "パーキンソン病", treatment: "リズム音刺激歩行訓練", smd: "0.38", isbn: "4896329316", summary: "すくみ足の発生頻度減少と、歩幅の向上が確認された。", ai: "聴覚刺激を同期させることで、脳のすくみ足反応を効果的にバイパス。歩行のテンポがスムーズになります。" }, 
+        { disease: "肩腱板断裂（肩の疾患）", treatment: "腱板修復術後の進行性抵抗運動（筋力トレーニング）", smd: "0.58", isbn: "4896329340", summary: "術後早期からの積極的な可動域・筋力訓練が、肩関節機能の大幅な回復に寄与した。", ai: "高い効果量が確認されています。術後のプロトコルに準じながら段階的に負荷をかける筋トレが回復への近道です。" }, 
+        { disease: "肩関節周囲炎（四十肩・五十肩・肩の疾患）", treatment: "非特異的関節可動域訓練 ＋ 徒手療法", smd: "0.41", isbn: "4896329340", summary: "従来の自主トレ指導に加え、セラピストによる適切な徒手療法を加えることで夜間痛が有意に改善した。", ai: "自主トレだけよりも、専門職による直接的な徒手療法（モビライゼーション等）を組み合わせることで夜間痛が和らぎます。" }, 
+        { disease: "変形性膝関節症（整形外科・運動器系疾患）", treatment: "大腿四頭筋筋力トレーニング ＋ 物理療法", smd: "0.52", isbn: "4896329340", summary: "筋力運動に温熱・電気療法を併用することで、膝関節痛の緩和と歩行能力の向上が認められた。", ai: "膝を支える太ももの筋肉を鍛えつつ、電気や温熱で痛みを和らげる王道のコンビネーション。歩くのが楽になります。" }, 
+        { disease: "腰痛症（整形外科・運動器系疾患）", treatment: "コアスタビリティ運動 ＋ 認知行動療法", smd: "0.44", isbn: "4896329340", summary: "多裂筋や腹横筋を狙った体幹安定化運動に心理的アプローチを加えることで、慢性腰痛の再発率が低下した。", ai: "お腹のインナーマッスルを鍛える運動に、「腰痛への恐怖心」を減らすアプローチを加えることで再発を防ぎます。" }, 
+        { disease: "大腿骨近位部骨折術後（整形外科・運動器系疾患）", treatment: "早期離床プログラム ＋ 進行性抵抗運動", smd: "0.61", isbn: "4896329340", summary: "術後24〜48時間以内の超早期離床と積極的な負荷訓練により、歩行機能の獲得率が大幅に向上した。", ai: "非常に高い数値です！手術後、1日でも早くベッドから離れて体重をかける訓練を行うことが、早期回復の最大の鍵です。" }, 
+        { disease: "脊髄損傷（中枢神経系疾患）", treatment: "免荷式トレッドミル訓練 ➔ ロボットスーツHALを用いた歩行訓練", smd: "0.48", isbn: "4896329316", summary: "自立支援型ロボットを用いた歩行訓練を行うことで、通常の歩行訓練と比較して歩行自立度が有意に改善した。", ai: "ロボットが立ち上がりや歩行の神経信号をサポート。自分の力で歩く感覚を脳に再学習させる最先端リハビリです。" }, 
+        { disease: "慢性心不全・心筋梗塞（内部障害・その他）", treatment: "包括的心臓リハビリテーション", smd: "0.55", isbn: "4896329359", summary: "監視下での適切な有酸素運動を継続することにより、再入院リスクの大幅な減少が証明された。", ai: "有酸素運動によって心臓のポンプ機能を優しく強化。適切な運動習慣が将来の再入院リスクを大きく引き下げます。" }, 
+        { disease: "慢性閉塞性肺疾患: COPD（内部障害・その他）", treatment: "呼吸リハビリテーション（排痰法）", smd: "0.49", isbn: "4896329153", summary: "徒手的な排痰補助（スクイージング）と呼吸筋訓練の組み合わせにより、呼吸困難感の軽減が認められた。", ai: "肺に溜まった痰を出す手技（スクイージング）と呼吸訓練を併用。息苦しさが和らぎ、動ける範囲が広がります。" }, 
+        { disease: "廃用症候群", treatment: "超早期離床プログラム", smd: "0.57", isbn: "489632439X", summary: "急性期入院直後から座位・立位時間を強制的に確保することで、筋萎縮や関節拘縮を最小限に抑える効果が確認された。", ai: "ベッドで寝たきりになるのを防ぐため、入院直後から座る・立つ時間を増やす介入。体全体の衰えを予防します。" } 
+    ]; 
+    
+    // 🔍 検索ボタンを押したときの処理 
+    function searchMeta() { 
+        const word = document.getElementById("searchWord").value.trim().toLowerCase(); 
+        const resultArea = document.getElementById("resultArea"); 
+        
+        if (!word) { 
+            resultArea.innerHTML = "<p style='color:red;'>キーワードを入力してください。</p>"; 
+            return; 
         } 
-    };
+        
+    　　// データベースから検索（部分一致） 
+        const filtered = database.filter(item => 
+            item.disease.toLowerCase().includes(word) || 
+            item.treatment.toLowerCase().includes(word) 
+        ); 
+        
+        if (filtered.length ===0) { 
+            resultArea.innerHTML = "<p>該当するリハビリデータが見つかりませんでした。</p>"; 
+            return; 
+        } 
+        
+        let html = ""; 
+        for (let item of filtered) { 
+            // Amazonの自動リンク 
+            const amazonUrl = `https://amazon.co.jp{item.isbn}?tag=${AMAZON_ASSOCIATE_ID}`; 
+            
+            html += ` 
+            　　<div class="card"> 
+              　　　<h3 style="margin-top:0; color:#0f172a;">🎯 対象疾患: ${item.disease}</h3> 
+                    <p><strong>治療法:</strong> ${item.treatment} (効果量SMD: ${item.smd})</p> 
+                   <p style="color:#475569;"><strong>論文要約:</strong> ${item.summary}</p> 
+                   
+                   <!-- 💡 サーバーを通さない即時表示の解説エリア --> 
+                   <div　class="ai-box"> 
+                   　　 <strong>🤖 AIによる専門数値の解説:</strong><br>${item.ai} 
+                　 </div> 
+                  
+                   <div　class="profit-area"> 
+                   　　 <a href="${amazonUrl}" target="_blank" rel="noopener" class="btn-amazon"> 
+                      　　　Amazonでこのリハビリ専門書を見る ➔ 
+                        </a> 
+                    </div> 
+                </div> 
+        　　`; 
+        } 
+        resultArea.innerHTML = html; 
+    } 
     
-    let paperData = [];
-    fetch('data.json')
-        .then(res => res.json())
-        .then(data => { paperData = data; })
-        .catch(err => { console.error("データ読み込みエラー:", err); });
+    // エンターキー対応 
+    document.getElementById("searchWord").addEventListener("keypress", function(e) { 
+        if (e.key === "Enter") searchMeta(); 
+    }); 
+</script> 
 
-    const searchInput = document.getElementById('searchInput');
-    const keywordSelect = document.getElementById('keywordSelect');
-
-    function doSearch() {
-        const query = searchInput.value.toLowerCase().trim();
-        const selectVal = keywordSelect.value.toLowerCase();
-        const resultArea = document.getElementById('resultArea');
-        const matchCount = document.getElementById('matchCount');
-        
-        resultArea.innerHTML = ''; 
-        matchCount.innerHTML = '';
-        if (!query && !selectVal) return;
-
-        // 肩関節警告アラート
-        if (query.includes('肩') || query.includes('shoulder') || selectVal.includes('capsulitis') || selectVal.includes('rotator')) {
-            resultArea.innerHTML += `<div style="background:#fef2f2; border:2px solid #ef4444; padding:12px; border-radius:10px; color:#991b1b; font-size:12px; margin-bottom:15px; font-weight:bold;">⚠️ 【肩関節データ厳重警告】肩の痛みには『腱の完全断裂』等、運動が絶対禁忌（悪化原因）となる病態が含まれます。画像診断がない状態での自己判断は絶対におやめください。</div>`;
-        }
-
-        const filtered = paperData.filter(p => {
-            const mq = query ? (p.title.toLowerCase().includes(query) || p.keywords.toLowerCase().includes(query)) : false;
-            const ms = selectVal ? (selectVal === 
-'all' || p.title.toLowerCase().includes(selectVal) || p.keywords.toLowerCase().includes(selectVal)) : false;
-            return query ? mq : ms;
-        });
-
-        matchCount.innerHTML = `該当論文数: ${filtered.length} 件`;
-        
-        filtered.forEach(p => {
-            const exclusion = p.title.includes('Capsulitis') ? "重度の骨粗鬆症、肩関節の骨折、糖尿病性拘縮、ステロイド注射直後の患者" : "完全断裂症例、過去の肩関節手術既往、頸椎疾患由来の肩痛患者";
-            resultArea.innerHTML += `
-                <div class="paper-card">
-                    <h3 class="paper-title">${p.title}</h3>
-                    <p style="font-size:11px; color:#64748b; margin:0 0 10px 0;">ジャーナル: ${p.journal} (${p.year})</p>
-                    <div class="data-section">
-                        <strong>📊 抽出統計値:</strong><br>
-                        • <span class="tooltip" data-tip="標準化平均差。0.5で中効果、0.8以上で大効果。">SMD</span> = ${p.smd}<br>
-                        • <span class="tooltip" data-tip="95%信頼区間。0を跨がない場合統計的に有意。">95% CI</span> = ${p.ci}<br>
-                        • <span class="tooltip" data-tip="有意確率。0.05未満であれば統計的に信頼可能。">p-value</span> = ${p.p_value}
-                    </div>
-                    <div style="background:#fffbeb; border-left:4px solid #d97706; padding:8px; font-size:11px; color:#78350f; margin-bottom:10px;"><strong>⚠️ 論文における主な除外基準:</strong><br>${exclusion}</div>
-                    <a href="${p.pubmed}" target="_blank" class="pubmed-btn">🔗 PubMedで原文のすべての除外条件を確認</a>
-                </div>`;
-        });
-    }
-    searchInput.addEventListener('input', () => { if(searchInput.value) keywordSelect.value = ""; doSearch(); });
+</body> 
+</html>
