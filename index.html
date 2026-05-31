@@ -46,19 +46,25 @@ html
     <!-- アクセスカウンター -->
     <div class="counter-box">📊 現在の延べ閲覧回数: <span id="viewCounter" class="counter-num">1</span> 回</div>
 
-    <!-- 免責ポップアップ（最初からボタンが押せるように修正完了） -->
-    <div id="modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>⚠️ 利用規約（自己責任の同意）</h3>
-            <div id="scrollBox" class="scroll-box">
-                <p>【重要・免責事項】当サイトは、リハビリテーションに関する論文の統計数値（SMD・CI・p値）のみを機械的に表示するデータベースです。特定の治療法を指示・推奨するものではありません。</p>
-                <p style="color:red; font-weight:bold;">掲載情報に基づく自己流のリハビリは、転倒や心負荷等の重大な危険を伴います。必ず専門医の指示に従ってください。当方は一切の責任を負いません。</p>
-                <p>掲載データは研究結果の事実のみであり、実際の臨床応用に関しては必ず専門医療従事者の指示を仰いでください。</p>
-                <p>当サイトの情報は自己責任でご利用ください。</p>
-            </div>
-        </div>
+    <div class="alert-bar">
+    <div class="alert-content">
+        <strong>⚠️ 【重要・免責事項】</strong> 当サイトはリハビリに関する論文の統計数値（SMD・CI・p値）のみを表示するデータベースであり、特定の治療法を推奨しません。掲載情報に基づく自己流のリハビリは、転倒や心負荷等の重大な危険を伴います。実際の臨床応用に関しては必ず専門医療従事者の指示を仰ぎ、自己責任でご利用ください。
     </div>
+</div>
 
+<style>
+.alert-bar {
+    background-color: #fff3f3; /* 薄い赤背景 */
+    border-bottom: 2px solid #ffcccc;
+    padding: 12px 20px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #333;
+}
+.alert-content strong {
+    color: #cc0000;
+}
+</style>
     <!-- 検索UI -->
     <div class="search-box">
         <label>🔍 疾患名やキーワードを入力（スマホ対応）:</label>
