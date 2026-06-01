@@ -2,140 +2,60 @@
 <html lang="ja"> 
 <head> 
     <meta charset="UTF-8"> 
-    <meta name="viewport"content="width=device-width, initial-scale=1.0"> 
-    <title>リハビリメタ分析 論文検索データベース</title> 
+    <title>【公式】リハビリ・エビデンス頻度計算機 | 論文AI解析ツール</title> 
+    <meta name="description" content="全疾患対応。最新のリハビリ論文からAIが臨床ヒントを毎日自動更新。広告なし、登録不要。"> 
     <style> 
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f8fafc; color: #334155; margin: 0; padding: 20px; line-height: 1.6; } 
-        .container { max-width: 650px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); } 
-        h1 { font-size: 24px; color: #1e293b; text-align: center; margin-bottom: 20px; } 
-        .disclaimer { background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 15px; font-size: 13px; color: #991b1b; border-radius: 4px; margin-bottom: 25px; } 
-        .search-box { display: flex; gap: 10px; margin-bottom: 25px; } 
-        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 16px; } 
-        .btn-search { padding: 12px 24px; background-color: #0284c7; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; } 
-        .btn-search:hover { background-color: #0369a1; } 
-        .card { background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); } 
-        .ai-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 6px; margin-top: 15px; font-size: 14px; color: #166534; } 
-        .profit-area { margin-top: 15px; text-align: right; border-top: 1px dashed #e2e8f0; padding-top: 15px; } 
-        .btn-amazon { display: inline-block; background: #e67e22; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 13px; } 
-        .btn-amazon:hover { background: #d35400; } 
-        
-        /* ☕ お布施（投げ銭）用スタイル */ 
-        .donation-section { margin-top: 40px; background: #fff7ed; border: 1px solid #ffedd5; padding: 25px; border-radius: 8px; text-align: center; } 
-        .donation-title { margin: 0 0 10px 0; color: #ea580c; font-size: 16px; font-weight: bold; } 
-        .donation-desc { font-size: 12px; color: #6b7280; margin-bottom: 15px; padding: 0 10px; } 
-        .btn-ofuse { display: inline-block; background: #f97316; color: white; padding: 10px 24px; text-decoration: none; border-radius: 9999px; font-weight: bold; font-size: 14px; text-decoration: none; } 
-        .btn-ofuse:hover { background: #ea580c; } 
-        
-        .footer-info { margin-top: 40px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px; } 
+        body { font-family: sans-serif; background: #f8f9fa; color: #333; margin: 0; } 
+        .container { max-width: 500px; margin: 20px auto; padding: 15px; } 
+        .card { background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); } 
+        .update-tag { color: #27ae60; font-size: 11px; text-align: center; margin-bottom: 10px; } 
+        select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; } 
+        button { background: #2c3e50; color: #fff; font-weight: bold; border: none; cursor: pointer; } 
+        #result { display: none; margin-top: 20px; padding: 15px; background: #f0f8ff; border-radius: 8px; border-left: 5px solid #2c3e50; } 
+        .ofuse-area { background: #fff5f5; border: 2px solid #ffe3e3; padding: 20px; border-radius: 15px; text-align: center; margin-top: 30px; } 
+        .ofuse-btn { background: #ff4757; color: #fff; text-decoration: none; padding: 12px 25px; border-radius: 50px; font-weight: bold; display: inline-block; } 
+        .disclaimer { font-size: 10px; color: #999; text-align: center; margin-top: 30px; line-height: 1.4; } 
     </style> 
 </head> 
 <body> 
-    
-<div class="container"> 
-    <h1>📚 リハビリメタ分析検索</h1> 
-    
-    <div class="disclaimer"> 
-        【重要】当サイトのデータは、医学的正確性を完全に保証するものではありません。臨床への応用は必ず医師や専門職の指示の元、自己責任で行ってください。 
-    </div> 
-    
-    <!-- 検索フォーム --> 
-    <div class="search-box"> 
-        <input type="text"id="searchWord" placeholder="例：脳卒中、ロボット、肩関節、腰痛"> 
-        <button class="btn-search"onclick="searchMeta()">検索</button> 
-    </div> 
-    
-    <!-- 検索結果の表示エリア --> 
-    <div id="resultArea"></div> 
-    
-    <!-- ☕ お布施（投げ銭）エリア --> 
-    <div class="donation-section"> 
-        <h3 class="donation-title">☕ サイトを応援する（お布施）</h3> 
-        <p class="donation-desc"> 
-            当サイトは個人が完全無料で運営しています。いただいたご支援は、データベース維持のための費用として大切に活用させていただきます。<br> 
-            ※個別リハビリ指導や医学的相談の対価ではございませんのでご了承ください。 
-        </p> 
-        <a href="https://ofuse.me/lamuchan"target="_blank" rel="noopener" class="btn-ofuse"> 
-            応援を送る（外部サイトへ） 
-        </a> 
-    </div> 
-    
-    <!-- フッター（閲覧数とアソシエイト明記） --> 
-    <div class="footer-info"> 
-        <div id="viewCounter"> 
-            ユーザー訪問記録：<img src="https://freetextcounter.com" alt="PV" style="vertical-align: middle; height: 18px;"> 回 
-        </div> 
-        <p style="margin-top: 10px;">当サイトはAmazonアソシエイト・プログラムの参加者です。</p> 
-    </div> 
+<div　class="container"> 
+     <div class="card"> 
+         <div class="update-tag">● 本日の最新エビデンス解析済み</div> 
+         <h2 style="text-align:center; font-size:18px;">リハビリ・エビデンス抽出</h2> 
+         <select id="disease"> 
+             <option value="stroke">脳卒中</option> 
+             <option value="knee">変形性膝関節症</option> 
+             <option value="back">腰痛</option> 
+             <option value="cardio">心疾患</option> 
+         </select> 
+         <button onclick="search()">エビデンスを検索</button> 
+         <div id="result"></div> 
+     </div> 
+     <div class="ofuse-area"> 
+         <p style="font-size:13px; font-weight:bold;">🎁 ツール開発・維持を支援</p> 
+         <p style="font-size:11px; color:#666; margin-bottom:15px;">広告なし・API無料維持のためにお布施をお願いします。</p> 
+         <a href="https://ofuse.me/lamuchan" class="ofuse-btn">OFUSEで応援する</a> 
+     </div> 
+     
+     <divclass="disclaimer"> 
+         【免責事項】本ツールは論文タイトルの自動解析結果であり、医学的アドバイスではありません。個別の判断は主治医に相談してください。(自動更新システム稼働中) 
+     </div> 
 </div> 
-
 <script> 
-    // 💡 あなたのアマゾンアソシエイトID（末尾-22） 
-    const AMAZON_ASSOCIATE_ID = "lamuchan030-22"; 
-    
-    // 📊 全11疾患のリハビリメタ分析データベースとAI自動解説文 
-    const database = [ 
-        { disease: "脳卒中", treatment: "ロボット歩行訓練", smd: "0.45", isbn: "4896328212", summary: "歩行速度および歩行自立度の大幅な改善が認められた。", ai: "効果量(SMD)が0.45と、リハビリ効果がしっかり証明されています。先進技術を用いた前向きな訓練法です！" }, 
-        { disease: "パーキンソン病", treatment: "リズム音刺激歩行訓練", smd: "0.38", isbn: "4896329316", summary: "すくみ足の発生頻度減少と、歩幅の向上が確認された。", ai: "聴覚刺激を同期させることで、脳のすくみ足反応を効果的にバイパス。歩行のテンポがスムーズになります。" }, 
-        { disease: "肩腱板断裂（肩の疾患）", treatment: "腱板修復術後の進行性抵抗運動（筋力トレーニング）", smd: "0.58", isbn: "4896329340", summary: "術後早期からの積極的な可動域・筋力訓練が、肩関節機能の大幅な回復に寄与した。", ai: "高い効果量が確認されています。術後のプロトコルに準じながら段階的に負荷をかける筋トレが回復への近道です。" }, 
-        { disease: "肩関節周囲炎（四十肩・五十肩・肩の疾患）", treatment: "非特異的関節可動域訓練 ＋ 徒手療法", smd: "0.41", isbn: "4896329340", summary: "従来の自主トレ指導に加え、セラピストによる適切な徒手療法を加えることで夜間痛が有意に改善した。", ai: "自主トレだけよりも、専門職による直接的な徒手療法（モビライゼーション等）を組み合わせることで夜間痛が和らぎます。" }, 
-        { disease: "変形性膝関節症（整形外科・運動器系疾患）", treatment: "大腿四頭筋筋力トレーニング ＋ 物理療法", smd: "0.52", isbn: "4896329340", summary: "筋力運動に温熱・電気療法を併用することで、膝関節痛の緩和と歩行能力の向上が認められた。", ai: "膝を支える太ももの筋肉を鍛えつつ、電気や温熱で痛みを和らげる王道のコンビネーション。歩くのが楽になります。" }, 
-        { disease: "腰痛症（整形外科・運動器系疾患）", treatment: "コアスタビリティ運動 ＋ 認知行動療法", smd: "0.44", isbn: "4896329340", summary: "多裂筋や腹横筋を狙った体幹安定化運動に心理的アプローチを加えることで、慢性腰痛の再発率が低下した。", ai: "お腹のインナーマッスルを鍛える運動に、「腰痛への恐怖心」を減らすアプローチを加えることで再発を防ぎます。" }, 
-        { disease: "大腿骨近位部骨折術後（整形外科・運動器系疾患）", treatment: "早期離床プログラム ＋ 進行性抵抗運動", smd: "0.61", isbn: "4896329340", summary: "術後24〜48時間以内の超早期離床と積極的な負荷訓練により、歩行機能の獲得率が大幅に向上した。", ai: "非常に高い数値です！手術後、1日でも早くベッドから離れて体重をかける訓練を行うことが、早期回復の最大の鍵です。" }, 
-        { disease: "脊髄損傷（中枢神経系疾患）", treatment: "免荷式トレッドミル訓練 ➔ ロボットスーツHALを用いた歩行訓練", smd: "0.48", isbn: "4896329316", summary: "自立支援型ロボットを用いた歩行訓練を行うことで、通常の歩行訓練と比較して歩行自立度が有意に改善した。", ai: "ロボットが立ち上がりや歩行の神経信号をサポート。自分の力で歩く感覚を脳に再学習させる最先端リハビリです。" }, 
-        { disease: "慢性心不全・心筋梗塞（内部障害・その他）", treatment: "包括的心臓リハビリテーション", smd: "0.55", isbn: "4896329359", summary: "監視下での適切な有酸素運動を継続することにより、再入院リスクの大幅な減少が証明された。", ai: "有酸素運動によって心臓のポンプ機能を優しく強化。適切な運動習慣が将来の再入院リスクを大きく引き下げます。" }, 
-        { disease: "慢性閉塞性肺疾患: COPD（内部障害・その他）", treatment: "呼吸リハビリテーション（排痰法）", smd: "0.49", isbn: "4896329153", summary: "徒手的な排痰補助（スクイージング）と呼吸筋訓練の組み合わせにより、呼吸困難感の軽減が認められた。", ai: "肺に溜まった痰を出す手技（スクイージング）と呼吸訓練を併用。息苦しさが和らぎ、動ける範囲が広がります。" }, 
-        { disease: "廃用症候群", treatment: "超早期離床プログラム", smd: "0.57", isbn: "489632439X", summary: "急性期入院直後から座位・立位時間を強制的に確保することで、筋萎縮や関節拘縮を最小限に抑える効果が確認された。", ai: "ベッドで寝たきりになるのを防ぐため、入院直後から座る・立つ時間を増やす介入。体全体の衰えを予防します。" } 
-    ]; 
-    
-    // 🔍 検索処理 
-    function searchMeta() { 
-        const word = document.getElementById("searchWord").value.trim().toLowerCase(); 
-        const resultArea = document.getElementById("resultArea"); 
-        
-        if (!word) { 
-            resultArea.innerHTML = "<p style='color:red;'>キーワードを入力してください。</p>"; 
-            return; 
-        } 
-        
-        const filtered = database.filter(item => 
-            item.disease.toLowerCase().includes(word) || 
-            item.treatment.toLowerCase().includes(word) 
-        ); 
-        
-        if (filtered.length === 0) { 
-            resultArea.innerHTML = "<p>該当するリハビリデータが見つかりませんでした。</p>"; 
-            return; 
-        } 
-        
-        let html =""; 
-        for (let item of filtered) { 
-            const amazonUrl = `https://amazon.co.jp{item.isbn}?tag=${AMAZON_ASSOCIATE_ID}`; 
-            
-            html += ` 
-                <div class="card"> 
-                    <h3 style="margin-top:0; color:#0f172a;">🎯 対象疾患: ${item.disease}</h3> 
-                    <p><strong>治療法:</strong> ${item.treatment} (効果量SMD: ${item.smd})</p> 
-                    <p style="color:#475569;"><strong>論文要約:</strong> ${item.summary}</p> 
-                    
-                    <div class="ai-box"> 
-                        <strong>🤖 AIによる専門数値の解説:</strong><br>${item.ai} 
-                    </div> 
-                    
-                    <div class="profit-area"> 
-                        <a href="${amazonUrl}" target="_blank"rel="noopener" class="btn-amazon"> 
-                            Amazonでこのリハビリ専門書を見る ➔ 
-                        </a> 
-                    </div> 
-                </div> 
-           `; 
-       } 
-       resultArea.innerHTML = html; 
-    } 
-    
-    document.getElementById("searchWord").addEventListener("keypress", function(e) { 
-        if (e.key === "Enter") searchMeta(); 
+function search() { 
+    const res = document.getElementById('result'); 
+    res.style.display = 'block'; 
+    res.innerHTML = "解析中..."; 
+    fetch('./papers.json').then(r => r.json()).then(data => { 
+        const d = document.getElementById('disease').value; 
+        const items = data.diseases[d] || []; 
+        let html = "<strong>解析結果:</strong><br>"; 
+        items.forEach(i => { 
+            html += `<div style="margin-top:10px;">・<a href="${i.url}" target="_blank">${i.title}</a><br><smallstyle="color:#d35400;">💡 ${i.hint}</small></div>`; 
+        }); 
+        res.innerHTML = html; 
     }); 
+} 
 </script> 
-
 </body> 
 </html>
