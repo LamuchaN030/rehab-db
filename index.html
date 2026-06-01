@@ -23,15 +23,8 @@
         .donation-section { margin-top: 40px; background: #fff7ed; border: 1px solid #ffedd5; padding: 25px; border-radius: 8px; text-align: center; } 
         .donation-title { margin: 0 0 10px 0; color: #ea580c; font-size: 16px; font-weight: bold; } 
         .donation-desc { font-size: 12px; color: #6b7280; margin-bottom: 15px; padding: 0 10px; } 
-        .btn-ofuse { display: inline-block; background: #f97316; color: white; padding: 10px 24px; text-decoration: none; border-radius: 9999px; font-weight: bold; font-size: 14px; } 
-        .btn-ofuse:hover { background: #ea580c; }
-        
-        /* 📬 Googleフォーム埋め込み用スタイル */ 
-        .form-section { margin-top: 40px; border-top: 2px dashed #cbd5e1; padding-top: 30px; } 
-        .form-title { font-size: 18px; color: #1e293b; text-align: center; margin-bottom: 5px; } 
-        .form-desc { font-size: 13px; color: #64748b; text-align: center; margin-bottom: 20px; } 
-        .form-wrapper { position: relative; width: 100%; height: 500px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; } 
-        .form-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; } 
+        .btn-ofuse { display: inline-block; background: #f97316; color: white; padding: 10px 24px; text-decoration: none; border-radius: 9999px; font-weight: bold; font-size: 14px; text-decoration: none; } 
+        .btn-ofuse:hover { background: #ea580c; } 
         
         .footer-info { margin-top: 40px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px; } 
     </style> 
@@ -44,53 +37,42 @@
     <div class="disclaimer"> 
         【重要】当サイトのデータは、医学的正確性を完全に保証するものではありません。臨床への応用は必ず医師や専門職の指示の元、自己責任で行ってください。 
     </div> 
+    
     <!-- 検索フォーム --> 
     <div class="search-box"> 
-        <input type="text" id="searchWord" placeholder="例：脳卒中、ロボット、肩関節、腰痛"> 
-        <button class="btn-search" onclick="searchMeta()">検索</button> 
+        <input type="text"id="searchWord" placeholder="例：脳卒中、ロボット、肩関節、腰痛"> 
+        <button class="btn-search"onclick="searchMeta()">検索</button> 
     </div> 
     
     <!-- 検索結果の表示エリア --> 
     <div id="resultArea"></div> 
     
-    <!-- ☕ お布施（投げ銭）エリア -->
+    <!-- ☕ お布施（投げ銭）エリア --> 
     <div class="donation-section"> 
         <h3 class="donation-title">☕ サイトを応援する（お布施）</h3> 
-        <p　class="donation-desc"> 
+        <p class="donation-desc"> 
             当サイトは個人が完全無料で運営しています。いただいたご支援は、データベース維持のための費用として大切に活用させていただきます。<br> 
             ※個別リハビリ指導や医学的相談の対価ではございませんのでご了承ください。 
         </p> 
-        <!-- 💡 【書き換え箇所1】下記のhrefを、あなたのOFUSEやnoteのページURLに書き換えてください --> 
-        <a href="https://ofuse.me/lamuchan" target="_blank" rel="noopener" class="btn-ofuse"> 
+        <a href="https://ofuse.me"target="_blank" rel="noopener" class="btn-ofuse"> 
             応援を送る（外部サイトへ） 
         </a> 
     </div> 
     
-    <!-- 📬 質問・提案受付フォームエリア --> 
-    <div class="form-section"> 
-        <h2　class="form-title">📬 ご質問・疾患追加のご提案</h2> 
-        <p class="form-desc">「このデータを追加してほしい」「数値の間違い」など、お気軽にお寄せください。</p> 
-        <div class="form-wrapper"> 
-            <!-- 💡 【書き換え箇所2】ここにGoogleフォームで取得した「埋め込みHTMLコード」のsrcURLを貼り付けてください --> 
-            <iframesrc="<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeT3raXTeqnaw-DaKQ008N1618yC9f778Iv9OL1218jtJ_itw/viewform?embedded=true" width="640" height="384" frameborder="0" marginheight="0" marginwidth="0">読み込んでいます…</iframe>" width="100%" height="500" frameborder="0" marginheight="0"marginwidth="0">読み込んでいます…</iframe> 
-        </div> 
-    </div> 
-    
     <!-- フッター（閲覧数とアソシエイト明記） --> 
     <div class="footer-info"> 
-        <!-- 📈 外部の完全無料カウンター（登録不要）を使ってPVを表示 --> 
-        <div　id="viewCounter"> 
-            ユーザー訪問記録：<img src="https://freetextcounter.com" alt="PV"style="vertical-align: middle; height: 18px;"> 回 
-    　　</div> 
-    　　<p style="margin-top: 10px;">当サイトはAmazonアソシエイト・プログラムの参加者です。</p> 
-　　</div> 
+        <div id="viewCounter"> 
+            ユーザー訪問記録：<img src="https://freetextcounter.com" alt="PV" style="vertical-align: middle; height: 18px;"> 回 
+        </div> 
+        <p style="margin-top: 10px;">当サイトはAmazonアソシエイト・プログラムの参加者です。</p> 
+    </div> 
 </div> 
 
 <script> 
-    // 💡 【書き換え箇所3】あなたのアマゾンアソシエイトID（末尾-22）に書き換えてください 
-    const AMAZON_ASSOCIATE_ID = "lamuchan030-22"; 
+    // 💡 あなたのアマゾンアソシエイトID（末尾-22） 
+    const AMAZON_ASSOCIATE_ID = "rehabili-22"; 
     
-    // 📊 全11疾患のデータベース（ここに丁寧な解説をあらかじめ内蔵させました！） 
+    // 📊 全11疾患のリハビリメタ分析データベースとAI自動解説文 
     const database = [ 
         { disease: "脳卒中", treatment: "ロボット歩行訓練", smd: "0.45", isbn: "4896328212", summary: "歩行速度および歩行自立度の大幅な改善が認められた。", ai: "効果量(SMD)が0.45と、リハビリ効果がしっかり証明されています。先進技術を用いた前向きな訓練法です！" }, 
         { disease: "パーキンソン病", treatment: "リズム音刺激歩行訓練", smd: "0.38", isbn: "4896329316", summary: "すくみ足の発生頻度減少と、歩幅の向上が確認された。", ai: "聴覚刺激を同期させることで、脳のすくみ足反応を効果的にバイパス。歩行のテンポがスムーズになります。" }, 
@@ -105,7 +87,7 @@
         { disease: "廃用症候群", treatment: "超早期離床プログラム", smd: "0.57", isbn: "489632439X", summary: "急性期入院直後から座位・立位時間を強制的に確保することで、筋萎縮や関節拘縮を最小限に抑える効果が確認された。", ai: "ベッドで寝たきりになるのを防ぐため、入院直後から座る・立つ時間を増やす介入。体全体の衰えを予防します。" } 
     ]; 
     
-    // 🔍 検索ボタンを押したときの処理 
+    // 🔍 検索処理 
     function searchMeta() { 
         const word = document.getElementById("searchWord").value.trim().toLowerCase(); 
         const resultArea = document.getElementById("resultArea"); 
@@ -115,45 +97,41 @@
             return; 
         } 
         
-    　　// データベースから検索（部分一致） 
         const filtered = database.filter(item => 
             item.disease.toLowerCase().includes(word) || 
             item.treatment.toLowerCase().includes(word) 
         ); 
         
-        if (filtered.length ===0) { 
+        if (filtered.length === 0) { 
             resultArea.innerHTML = "<p>該当するリハビリデータが見つかりませんでした。</p>"; 
             return; 
         } 
         
-        let html = ""; 
+        let html =""; 
         for (let item of filtered) { 
-            // Amazonの自動リンク 
             const amazonUrl = `https://amazon.co.jp{item.isbn}?tag=${AMAZON_ASSOCIATE_ID}`; 
             
             html += ` 
-            　　<div class="card"> 
-              　　　<h3 style="margin-top:0; color:#0f172a;">🎯 対象疾患: ${item.disease}</h3> 
+                <div class="card"> 
+                    <h3 style="margin-top:0; color:#0f172a;">🎯 対象疾患: ${item.disease}</h3> 
                     <p><strong>治療法:</strong> ${item.treatment} (効果量SMD: ${item.smd})</p> 
-                   <p style="color:#475569;"><strong>論文要約:</strong> ${item.summary}</p> 
-                   
-                   <!-- 💡 サーバーを通さない即時表示の解説エリア --> 
-                   <div　class="ai-box"> 
-                   　　 <strong>🤖 AIによる専門数値の解説:</strong><br>${item.ai} 
-                　 </div> 
-                  
-                   <div　class="profit-area"> 
-                   　　 <a href="${amazonUrl}" target="_blank" rel="noopener" class="btn-amazon"> 
-                      　　　Amazonでこのリハビリ専門書を見る ➔ 
+                    <p style="color:#475569;"><strong>論文要約:</strong> ${item.summary}</p> 
+                    
+                    <div class="ai-box"> 
+                        <strong>🤖 AIによる専門数値の解説:</strong><br>${item.ai} 
+                    </div> 
+                    
+                    <div class="profit-area"> 
+                        <a href="${amazonUrl}" target="_blank"rel="noopener" class="btn-amazon"> 
+                            Amazonでこのリハビリ専門書を見る ➔ 
                         </a> 
                     </div> 
                 </div> 
-        　　`; 
-        } 
-        resultArea.innerHTML = html; 
+           `; 
+       } 
+       resultArea.innerHTML = html; 
     } 
     
-    // エンターキー対応 
     document.getElementById("searchWord").addEventListener("keypress", function(e) { 
         if (e.key === "Enter") searchMeta(); 
     }); 
